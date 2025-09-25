@@ -17,7 +17,7 @@ Run an LLM **entirely in the browser**. Primary path uses **WebLLM + WebGPU**. I
 
 ### Clone and Setup
 ```bash
-git clone https://github.com/fenago/drleewebslm
+git clone https://github.com/aflorentin001/AlexWebSLM
 git remote remove origin
 cd drleewebslm
 npx http-server web -p 8000
@@ -59,10 +59,10 @@ npx http-server web -p 8000
 ### Deploy to Netlify
 
 #### Method 1: Deploy from GitHub (Recommended)
-1. Push your code to GitHub (e.g., `https://github.com/fenago/DrleeWebSLM`) - obviously use your own repo
+1. Push your code to GitHub (e.g., `https://github.com/aflorentin001/AlexWebSLM`) - obviously use your own repo
 2. Log into Netlify (https://app.netlify.com)
 3. Click **"Add new site"** → **"Import an existing project"**
-4. Connect to GitHub and select your repository (`fenago/DrleeWebSLM`)
+4. Connect to GitHub and select your repository (`aflorentin001/AlexWebSLM`)
 5. Configure build settings:
    - **Base directory**: Leave blank
    - **Build command**: Leave blank (no build needed)
@@ -119,4 +119,4 @@ npx http-server web -p 8000
 ## Credits
 - WebLLM by the MLC team
 - wllama by @ngxson (WASM binding for llama.cpp)
-- Dr. Ernesto Lee / LVNG.ai
+- AFai
