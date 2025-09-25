@@ -6,8 +6,8 @@ const APP_ASSETS = [
   "./styles.css",
   "./app.js",
   "./manifest.json",
-  "../public/icon-192.png",
-  "../public/icon-512.png",
+  "../public/strawberry-192.png",
+  "../public/strawberry-512.png",
 ];
 
 self.addEventListener("install", (event) => {

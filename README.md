@@ -46,8 +46,8 @@ npx http-server web -p 8000
   pwa.md               # PWA/offline notes
   models.md            # Model choices, tradeoffs
 /public
-  icon-192.png         # Placeholder PWA icons
-  icon-512.png
+  strawberry-192.png   # Strawberry PWA icons
+  strawberry-512.png
 ```
 
 ## Browser Support
