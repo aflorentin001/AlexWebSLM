@@ -1,7 +1,7 @@
-# DrLee GPT - Small Language Model (Web Edition)
+# YedderGirl GPT - Small Language Model (Web Edition)
 
 <div align="center">
-  <img src="./public/drlee-ai-logo.png" alt="DrLee AI Logo" width="200">
+  <img src="./web/strawberry-logo.svg" alt="Strawberry AI Logo" width="200">
 </div>
 
 Run an LLM **entirely in the browser**. Primary path uses **WebLLM + WebGPU**. If WebGPU isn't available, we **fallback to WASM** via **wllama** (no server, no keys).
