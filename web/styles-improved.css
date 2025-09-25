@@ -1,18 +1,18 @@
 /* ===== CSS CUSTOM PROPERTIES (VARIABLES) ===== */
 :root {
-  /* Colors */
-  --primary-bg: #f8f9fa;
-  --secondary-bg: #ffffff;
-  --accent-bg: #f0f9ff;
-  --border-color: #e5e7eb;
-  --border-light: #d1d5db;
-  --text-primary: #1f2937;
-  --text-secondary: #374151;
-  --text-muted: #6b7280;
-  --success-color: #22c55e;
-  --success-glow: #bbf7d0;
-  --primary-button: #4f46e5;
-  --primary-hover: #4338ca;
+  /* Darker, more modern background */
+  --primary-bg: #1a1a1a;
+  --secondary-bg: #2d2d2d;
+  --accent-bg: #1e3a8a;
+  --border-color: #404040;
+  --border-light: #525252;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --success-color: #10b981;
+  --success-glow: #065f46;
+  --primary-button: #3b82f6;
+  --primary-hover: #2563eb;
 
   /* Spacing */
   --spacing-xs: 4px;
