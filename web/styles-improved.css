@@ -1,18 +1,18 @@
 /* ===== CSS CUSTOM PROPERTIES (VARIABLES) ===== */
 :root {
-  /* Darker, more modern background */
-  --primary-bg: #1a1a1a;
-  --secondary-bg: #2d2d2d;
-  --accent-bg: #1e3a8a;
-  --border-color: #404040;
-  --border-light: #525252;
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
+  /* Lighter, more balanced background */
+  --primary-bg: #ABC8C0;
+  --secondary-bg: #d4e4df;
+  --accent-bg: #8fb3c7;
+  --border-color: #9bb0a8;
+  --border-light: #b8c8c0;
+  --text-primary: #2d3e36;
+  --text-secondary: #4a5d54;
+  --text-muted: #6b7d75;
   --success-color: #10b981;
   --success-glow: #065f46;
-  --primary-button: #3b82f6;
-  --primary-hover: #2563eb;
+  --primary-button: #5a7b70;
+  --primary-hover: #4a6b60;
 
   /* Spacing */
   --spacing-xs: 4px;
@@ -104,26 +104,20 @@ h1 {
   font-weight: 600;
 }
 
-/* ===== BUTTONS ===== */
-.actions button {
-  background: var(--secondary-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  padding: var(--spacing-md) var(--spacing-lg);
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-size: var(--font-size-base);
-  font-weight: 500;
-  min-width: 40px;
-  min-height: 40px;
+/* Ensure both buttons are exactly the same size */
+#btn-settings,
+#btn-clear {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 18px;
+  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
 }
 
 .actions button:hover {
-  background: #404040;
+  background: #c5d8d1;
   border-color: var(--border-light);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
@@ -426,8 +420,8 @@ dialog {
   .actions button {
     padding: 4px var(--spacing-sm);
     font-size: 11px;
-    min-width: 36px;
-    min-height: 36px;
+    min-width: 40px;
+    min-height: 40px;
   }
 }
 
