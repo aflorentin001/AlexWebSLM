@@ -1,0 +1,26 @@
+{
+  "name": "drleewebslm",
+  "version": "1.0.0",
+  "description": "<div align=\"center\">   <img src=\"./public/drlee-ai-logo.png\" alt=\"DrLee AI Logo\" width=\"200\"> </div>",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aflorentin001/DrleeWebSLM.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aflorentin001/DrleeWebSLM/issues"
+  },
+  "homepage": "https://github.com/aflorentin001/DrleeWebSLM#readme",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}
