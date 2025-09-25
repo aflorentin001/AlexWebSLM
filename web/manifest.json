@@ -1,5 +1,5 @@
 {
-  "name": "WebGPU LLM (WebLLM + WASM)",
+  "name": "YedderGirl GPT - Small Language Model (Web Edition)",
   "short_name": "Web LLM",
   "start_url": "./index.html",
   "display": "standalone",
