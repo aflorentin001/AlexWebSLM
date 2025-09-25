@@ -109,15 +109,22 @@ h1 {
   background: var(--secondary-bg);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
   border-radius: var(--border-radius);
   cursor: pointer;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  min-width: 40px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s ease;
 }
 
 .actions button:hover {
-  background: #f3f4f6;
+  background: #404040;
+  border-color: var(--border-light);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
@@ -419,6 +426,8 @@ dialog {
   .actions button {
     padding: 4px var(--spacing-sm);
     font-size: 11px;
+    min-width: 36px;
+    min-height: 36px;
   }
 }
 
