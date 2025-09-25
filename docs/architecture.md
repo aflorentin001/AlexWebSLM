@@ -90,7 +90,7 @@ graph TD
     subgraph "Progressive Web App"
         MANIFEST[manifest.json<br/>PWA Config]
         SERVICEW[sw.js<br/>Service Worker]
-        ICONS[App Icons<br/>drlee-ai-logo.png]
+        ICONS[App Icons<br/>strawberryAI.png]
     end
     
     APP --> INIT

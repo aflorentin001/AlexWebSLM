@@ -1,7 +1,7 @@
 {
   "name": "drleewebslm",
   "version": "1.0.0",
-  "description": "<div align=\"center\">   <img src=\"./public/drlee-ai-logo.png\" alt=\"DrLee AI Logo\" width=\"200\"> </div>",
+  "description": "<div align=\"center\">   <img src=\"./public/strawberryAI.png\" alt=\"Strawberry AI Logo\" width=\"200\"> </div>",
   "main": "index.js",
   "directories": {
     "doc": "docs"
@@ -19,8 +19,5 @@
   "bugs": {
     "url": "https://github.com/aflorentin001/DrleeWebSLM/issues"
   },
-  "homepage": "https://github.com/aflorentin001/DrleeWebSLM#readme",
-  "dependencies": {
-    "http-server": "^14.1.1"
-  }
+  "homepage": "https://github.com/aflorentin001/DrleeWebSLM#readme"
 }
