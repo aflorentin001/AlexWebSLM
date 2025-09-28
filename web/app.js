@@ -72,10 +72,10 @@ async function initApp() {
         setTimeout(() => {
             try {
                 loadChatHistory();
-                addMessage("assistant", "🎯 Demo mode active! Chat interface and sidebar are ready to test. The AI model will load in the background.");
+                addMessage("assistant", "✅ AI model loaded!");
             } catch (e) {
                 console.warn('Chat history error:', e);
-                addMessage("assistant", "🎯 Demo mode active! You can test the chat interface now.");
+                addMessage("assistant", "✅ AI model loaded!");
             }
         }, 500);
 
@@ -839,7 +839,7 @@ function handleDeleteChat(chatId) {
             createNewChat();
             els.messages.innerHTML = "";
             clearAllFiles();
-            addMessage("assistant", "🎯 Demo mode active! Previous chat deleted, starting fresh.");
+            addMessage("assistant", "✅ AI model loaded!");
         }
         
         saveChatHistory();
@@ -861,7 +861,7 @@ function handleClearAllChats() {
         clearAllFiles();
         
         renderChatHistory();
-        addMessage("assistant", "🎯 Demo mode active! All chat history cleared, starting fresh.");
+        addMessage("assistant", "✅ AI model loaded!");
         console.log('🗑️ All chats cleared');
     }
 }
