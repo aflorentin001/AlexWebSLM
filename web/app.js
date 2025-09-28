@@ -169,7 +169,10 @@ async function handleFormSubmit(e) {
     const fileContent = getFileAttachments();
     const fullPrompt = fileContent ? prompt + "\n\n" + fileContent : prompt;
 
-    // Process the message based on runtime
+    // Add to messages array and process (original behavior)
+    messages.push({ role: "user", content: fullPrompt });
+
+    // Process the message
     try {
         if (runtime === "demo") {
             console.log('📝 Processing in demo mode:', fullPrompt);
@@ -287,18 +290,28 @@ function addMessage(who, text) {
     els.messages.append(row);
     els.messages.scrollTop = els.messages.scrollHeight;
 
-    // Always add to messages array first
-    if (who !== 'system' && !isLoadingChat) {
+    // Add to messages array (keep original behavior)
+    if (who !== 'system') {
         messages.push({ role: who, content: text });
     }
     
-    // Save message to current chat
+    // Save to chat history (non-blocking)
     if (currentChatId && who !== 'system' && !isLoadingChat) {
-        const currentChat = chatHistory.find(c => c.id === currentChatId);
-        if (currentChat) {
-            // Debounce save to avoid excessive localStorage writes
-            clearTimeout(window.chatSaveTimeout);
-            window.chatSaveTimeout = setTimeout(() => saveCurrentChat(), 500);
+        try {
+            const currentChat = chatHistory.find(c => c.id === currentChatId);
+            if (currentChat) {
+                currentChat.messages = [...messages];
+                clearTimeout(window.chatSaveTimeout);
+                window.chatSaveTimeout = setTimeout(() => {
+                    try {
+                        saveChatHistory();
+                    } catch (e) {
+                        console.warn('Failed to save chat history:', e);
+                    }
+                }, 1000);
+            }
+        } catch (e) {
+            console.warn('Chat history error:', e);
         }
     }
 
@@ -442,40 +455,45 @@ async function initWithTimeout() {
                 throw new Error("WebGPU adapter not available");
             }
 
-            // Use a smaller, faster model for better performance
-            const fastModels = [
-                "Llama-3.2-1B-Instruct-q4f32_1-MLC",
-                "Phi-3.5-mini-instruct-q4f16_1-MLC", 
-                "gemma-2-2b-it-q4f16_1-MLC",
-                "Qwen2.5-0.5B-Instruct-q4f16_1-MLC"
-            ];
+            // Force use of the smallest available model
+            currentModel = "Qwen2.5-0.5B-Instruct-q4f16_1-MLC"; // Only ~300MB
             
-            // Populate model dropdown with fast models first
+            // Populate model dropdown but force small model
             try {
                 const list = webllm.prebuiltAppConfig?.model_list || [];
                 if (Array.isArray(list) && list.length) {
                     els.modelSelect.innerHTML = "";
                     
-                    // Add fast models first
-                    const availableFastModels = list.filter(m => fastModels.includes(m.model_id));
-                    const otherModels = list.filter(m => !fastModels.includes(m.model_id));
+                    // Find the smallest models first
+                    const smallModels = [
+                        "Qwen2.5-0.5B-Instruct-q4f16_1-MLC",  // ~300MB
+                        "Llama-3.2-1B-Instruct-q4f32_1-MLC", // ~600MB
+                        "Phi-3.5-mini-instruct-q4f16_1-MLC"  // ~800MB
+                    ];
                     
-                    [...availableFastModels, ...otherModels].forEach(m => {
+                    const availableSmallModels = list.filter(m => smallModels.includes(m.model_id));
+                    const otherModels = list.filter(m => !smallModels.includes(m.model_id));
+                    
+                    [...availableSmallModels, ...otherModels].forEach(m => {
                         const opt = document.createElement("option");
                         opt.value = m.model_id;
-                        opt.textContent = m.model_id + (fastModels.includes(m.model_id) ? " (Fast)" : "");
+                        const size = smallModels.includes(m.model_id) ? " (Small)" : " (Large)";
+                        opt.textContent = m.model_id + size;
                         els.modelSelect.appendChild(opt);
                     });
                     
-                    // Default to first fast model if available
-                    currentModel = availableFastModels.length > 0 ? availableFastModels[0].model_id : els.modelSelect.value;
+                    // Force the smallest model
+                    if (availableSmallModels.length > 0) {
+                        currentModel = availableSmallModels[0].model_id;
+                    }
                     els.modelSelect.value = currentModel;
                 }
             } catch (e) {
                 console.warn("Could not populate model list:", e);
-                // Fallback to a known small model
-                currentModel = "Llama-3.2-1B-Instruct-q4f32_1-MLC";
+                currentModel = "Qwen2.5-0.5B-Instruct-q4f16_1-MLC";
             }
+            
+            console.log(`🎯 Forcing small model: ${currentModel}`);
 
             setBadge("WebGPU (WebLLM) — initializing…");
             els.initLabel.textContent = "Loading model (first run downloads weights)…";
@@ -566,13 +584,10 @@ async function handleSend(prompt) {
     try {
         if (runtime === "webgpu") {
             const webllm = await import(WEBLLM_URL);
-            messages.push({ role: "user", content: fullPrompt });
-
-            // Update processing message
-            const processingMsg = els.messages.querySelector('.processing');
-            if (processingMsg) {
-                processingMsg.textContent = "🧠 Processing your question with WebLLM...";
-            }
+            
+            // Add processing message
+            const processingBubble = addMessage("assistant", "🧠 Processing your question with WebLLM...");
+            processingBubble.classList.add('processing');
 
             const chunks = await engine.chat.completions.create({
                 messages,
@@ -583,10 +598,8 @@ async function handleSend(prompt) {
                 signal: signal,
             });
 
-            // Remove processing indicator
-            if (processingMsg) {
-                processingMsg.classList.remove('processing');
-            }
+            // Remove processing indicator and start streaming
+            processingBubble.classList.remove('processing');
 
             let acc = "";
             for await (const ch of chunks) {
@@ -598,10 +611,10 @@ async function handleSend(prompt) {
                 acc += delta;
 
                 // Update the message in real-time
-                if (processingMsg) {
-                    processingMsg.textContent = acc;
-                }
+                processingBubble.textContent = acc;
             }
+            
+            // Add final response to messages array
             messages.push({ role: "assistant", content: acc });
             console.log('✅ WebGPU response completed');
 
