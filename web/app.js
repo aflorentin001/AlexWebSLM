@@ -63,34 +63,22 @@ async function initApp() {
         // Set up event listeners
         setupEventListeners();
 
-        // Start in demo mode immediately for testing
-        runtime = "demo";
-        setBadge("Demo Mode");
-        els.initLabel.textContent = "Demo mode - chat interface ready!";
-        
-        // Load chat history
-        setTimeout(() => {
-            try {
-                loadChatHistory();
-                addMessage("assistant", "✅ AI model loaded!");
-            } catch (e) {
-                console.warn('Chat history error:', e);
-                addMessage("assistant", "✅ AI model loaded!");
-            }
-        }, 500);
+        // Load chat history first
+        setTimeout(() => loadChatHistory(), 100);
 
-        // Try to initialize AI in background (non-blocking)
-        setTimeout(() => {
-            console.log('🔧 Attempting AI model initialization in background...');
-            init().then(() => {
-                runtime = "webgpu";
-                setBadge("WebGPU (WebLLM)");
-                els.initLabel.textContent = "AI model ready!";
-                addMessage("assistant", "✅ AI model loaded successfully! You can now get real AI responses.");
-            }).catch(error => {
-                console.log('AI model failed to load, staying in demo mode:', error.message);
-            });
-        }, 1000);
+        // Initialize the LLM engine properly
+        console.log('🔧 Initializing LLM engine...');
+        init().then(() => {
+            console.log('🎉 App initialization complete!');
+            addMessage("assistant", "✅ AI model loaded!");
+        }).catch(error => {
+            console.error('❌ Initialization failed:', error);
+            // Only fall back to demo if AI completely fails
+            runtime = "demo";
+            setBadge("Demo Mode");
+            els.initLabel.textContent = "Demo mode - AI model failed to load";
+            addMessage("assistant", `❌ AI model failed to load: ${error.message}\n\nYou can still use demo mode by typing questions!`);
+        });
 
         setProcessingState(false);
 
@@ -396,20 +384,13 @@ function getUploadedFilesContent() {
 // Initialize WebLLM or fallback to WASM
 async function init() {
     console.log('🔧 Starting runtime detection...');
-    
-    // Add timeout protection
-    const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Initialization timeout after 30 seconds')), 30000);
-    });
+    setBadge("Detecting runtime…");
+    els.initLabel.textContent = "Initializing AI model...";
     
     try {
-        return await Promise.race([initWithTimeout(), timeoutPromise]);
+        return await initWithTimeout();
     } catch (error) {
         console.error('❌ Initialization failed:', error);
-        // Force fallback to demo mode
-        runtime = "demo";
-        setBadge("Demo Mode");
-        els.initLabel.textContent = "Demo mode - type questions to test!";
         throw error;
     }
 }
