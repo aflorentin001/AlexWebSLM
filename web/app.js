@@ -159,10 +159,18 @@ async function handleFormSubmit(e) {
     const fullPrompt = fileContent ? prompt + "\n\n" + fileContent : prompt;
 
     // Process the message based on runtime
-    if (runtime === "demo") {
-        await handleDemoResponse(fullPrompt);
-    } else {
-        await handleSend(fullPrompt);
+    try {
+        if (runtime === "demo") {
+            console.log('📝 Processing in demo mode:', fullPrompt);
+            await handleDemoResponse(fullPrompt);
+        } else {
+            console.log('🤖 Processing with AI engine:', fullPrompt);
+            await handleSend(fullPrompt);
+        }
+    } catch (error) {
+        console.error('❌ Error processing message:', error);
+        addMessage("assistant", "❌ Sorry, there was an error processing your message. Please try again.");
+        setProcessingState(false);
     }
 }
 
@@ -591,21 +599,22 @@ async function handleSend(prompt) {
 
 // Demo response when LLM engine isn't available
 async function handleDemoResponse(prompt) {
+    console.log('🎭 Starting demo response for:', prompt);
     setProcessingState(true);
     
     // Add processing message
-    const processingBubble = addMessage("assistant", "🤖 Demo Mode: Processing your question...");
+    const processingBubble = addMessage("assistant", "🤖 Processing your question...");
     processingBubble.classList.add('processing');
 
     // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     const responses = [
-        `I'm running in demo mode since the AI model couldn't load. You asked: "${prompt.slice(0, 50)}..." - In a real scenario, I would analyze your question and provide a helpful response.`,
-        `Demo mode active! The WebLLM model is still loading. Your question about "${prompt.slice(0, 30)}..." would normally be processed by the local AI model.`,
-        `This is a demo response to: "${prompt.slice(0, 40)}..." Once the AI model finishes loading, you'll get real AI-powered answers.`,
-        `Demo mode: I can see your message "${prompt.slice(0, 35)}..." but I'm waiting for the AI model to initialize. Try refreshing the page!`,
-        `Running in fallback mode for: "${prompt.slice(0, 45)}..." Your question would normally be processed by the local language model.`
+        `Hello! I received your message: "${prompt}". I'm currently running in demo mode while the AI model loads in the background. In a full deployment, I would provide intelligent responses to your questions.`,
+        `Thanks for asking "${prompt}"! I'm a local AI assistant that runs entirely in your browser. Right now I'm in demo mode, but normally I'd analyze your question and provide helpful, contextual responses.`,
+        `I see you asked: "${prompt}". I'm YedderGirl GPT, a small language model designed to run locally. While the full AI model loads, I can acknowledge your messages and demonstrate the chat interface.`,
+        `Your question "${prompt}" has been received! I'm designed to be a helpful AI assistant that processes everything locally in your browser for privacy. The full model is initializing in the background.`,
+        `Hi there! You asked "${prompt}". I'm running in demonstration mode right now. Once fully loaded, I can help with questions, analyze documents, and provide intelligent responses - all while keeping your data private and local.`
     ];
 
     const response = responses[Math.floor(Math.random() * responses.length)];
@@ -615,7 +624,7 @@ async function handleDemoResponse(prompt) {
     processingBubble.textContent = response;
     
     setProcessingState(false);
-    console.log('✅ Demo response completed');
+    console.log('✅ Demo response completed for:', prompt);
 }
 
 // Chat History Management
