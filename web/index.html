@@ -3,25 +3,58 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>YedderGirl GPT - Small Language Model (Web Edition)</title>
+  <title>YedderGirl GPT - Small Language Model</title>
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" href="./strawberry-logo.svg">
   <link rel="apple-touch-icon" href="./strawberry-logo.svg">
-  <meta name="theme-color" content="#ABC8C0">
+  <meta name="theme-color" content="#0f172a">
   <link rel="stylesheet" href="./styles-improved.css">
 </head>
 <body>
   <div class="app">
-    <header>
-      <div class="title">
-        <img src="./strawberry-logo.svg" alt="Strawberry AI Logo" style="height: 32px; width: auto;">
-        <h1>YedderGirl GPT - Small Language Model (Web Edition)</h1>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <img src="./strawberry-vintage-logo.png" alt="YedderGirl AI Logo" style="height: 24px; width: 24px; border-radius: 50%; object-fit: cover;">
+          <span>YedderGirl GPT</span>
+        </div>
+        <button id="new-chat-btn" class="new-chat-btn">
+          <span class="plus-icon">+</span>
+          New chat
+        </button>
       </div>
-      <div class="actions">
-        <button id="btn-settings" title="Settings">⚙</button>
-        <button id="btn-clear" title="Clear chat">🧹</button>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-item active">
+            <span class="nav-icon">💬</span>
+            <span>Chats</span>
+          </div>
+        </div>
+      </nav>
+      
+      <div class="chat-history">
+        <div class="history-section">
+          <div class="history-header">
+            <h3>Recent</h3>
+            <button id="clear-all-chats" class="clear-all-btn" title="Clear all chat history">🗑️</button>
+          </div>
+          <div id="recent-chats" class="chat-list"></div>
+        </div>
       </div>
-    </header>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <header>
+        <div class="title">
+          <div class="title-text">
+            <h1>YedderGirl GPT</h1>
+            <h2>Small Language Model</h2>
+          </div>
+        </div>
+      </header>
 
     <section id="status" class="status">
       <span id="runtime-badge" class="badge">Detecting runtime…</span>
@@ -30,14 +63,29 @@
 
     <main class="chat">
       <div id="messages" class="messages"></div>
-      <form id="chat-form" class="input-row">
-        <input id="prompt" type="text" placeholder="Ask anything (runs locally)..." autocomplete="off" />
-        <button id="send" type="submit">Send ▸</button>
-      </form>
-      <div class="toolrow">
-        <button id="btn-tool-demo" title="Function call demo">Demo: getTime()</button>
+
+      <!-- File Upload Area -->
+      <div id="file-upload-area" class="file-upload-area">
+        <div class="upload-controls">
+          <input type="file" id="file-input" multiple accept=".txt,.md,.json,.js,.html,.css,.py,.java,.cpp,.c,.h,.xml,.csv,.log" />
+          <button id="clear-files-btn" title="Clear uploaded files">🗑️ Clear</button>
+        </div>
+        <div id="uploaded-files" class="uploaded-files"></div>
+      </div>
+
+      <div class="input-controls">
+        <div class="actions">
+          <button id="btn-settings" title="Settings">⚙ Settings</button>
+          <button id="btn-clear" title="Clear chat">🧹 Clear</button>
+        </div>
+        <form id="chat-form" class="input-row">
+          <input id="prompt" type="text" placeholder="Ask anything (runs locally)..." autocomplete="off" />
+          <button id="send" type="submit">Send ▸</button>
+          <button id="stop" type="button" style="display: none;" title="Stop current query">⏹️ Stop</button>
+        </form>
       </div>
     </main>
+    </div> <!-- End main-content -->
 
     <dialog id="settings">
       <form method="dialog" class="settings">

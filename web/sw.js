@@ -3,7 +3,7 @@ const CACHE = "webllm-cache-v1";
 const APP_ASSETS = [
   "./",
   "./index.html",
-  "./styles.css",
+  "./styles-improved.css",
   "./app.js",
   "./manifest.json",
   "../public/strawberry-192.png",

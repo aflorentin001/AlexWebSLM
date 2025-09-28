@@ -1,4 +1,4 @@
-# YedderGirl GPT - Small Language Model (Web Edition)
+# YedderGirl GPT - Small Language Model
 
 <div align="center">
   <img src="./web/strawberry-logo.svg" alt="Strawberry AI Logo" width="200">
