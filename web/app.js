@@ -68,10 +68,33 @@ async function initApp() {
 
         // Initialize the LLM engine properly
         console.log('🔧 Initializing LLM engine...');
+        
+        // Show memory usage info
+        if (performance.memory) {
+            const memMB = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+            console.log(`💾 Current memory usage: ${memMB}MB`);
+        }
+        
+        // Add timeout warning after 30 seconds
+        const timeoutWarning = setTimeout(() => {
+            if (runtime === "detecting") {
+                addMessage("assistant", "⏳ AI model is still loading... This can take 2-5 minutes on first run as it downloads ~1-2GB. Please be patient!");
+            }
+        }, 30000);
+        
         init().then(() => {
+            clearTimeout(timeoutWarning);
             console.log('🎉 App initialization complete!');
+            
+            // Show final memory usage
+            if (performance.memory) {
+                const memMB = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+                console.log(`💾 Memory usage after model load: ${memMB}MB`);
+            }
+            
             addMessage("assistant", "✅ AI model loaded!");
         }).catch(error => {
+            clearTimeout(timeoutWarning);
             console.error('❌ Initialization failed:', error);
             // Only fall back to demo if AI completely fails
             runtime = "demo";
@@ -419,21 +442,39 @@ async function initWithTimeout() {
                 throw new Error("WebGPU adapter not available");
             }
 
-            // Populate model dropdown
+            // Use a smaller, faster model for better performance
+            const fastModels = [
+                "Llama-3.2-1B-Instruct-q4f32_1-MLC",
+                "Phi-3.5-mini-instruct-q4f16_1-MLC", 
+                "gemma-2-2b-it-q4f16_1-MLC",
+                "Qwen2.5-0.5B-Instruct-q4f16_1-MLC"
+            ];
+            
+            // Populate model dropdown with fast models first
             try {
                 const list = webllm.prebuiltAppConfig?.model_list || [];
                 if (Array.isArray(list) && list.length) {
                     els.modelSelect.innerHTML = "";
-                    for (const m of list) {
+                    
+                    // Add fast models first
+                    const availableFastModels = list.filter(m => fastModels.includes(m.model_id));
+                    const otherModels = list.filter(m => !fastModels.includes(m.model_id));
+                    
+                    [...availableFastModels, ...otherModels].forEach(m => {
                         const opt = document.createElement("option");
                         opt.value = m.model_id;
-                        opt.textContent = m.model_id;
+                        opt.textContent = m.model_id + (fastModels.includes(m.model_id) ? " (Fast)" : "");
                         els.modelSelect.appendChild(opt);
-                    }
-                    currentModel = els.modelSelect.value;
+                    });
+                    
+                    // Default to first fast model if available
+                    currentModel = availableFastModels.length > 0 ? availableFastModels[0].model_id : els.modelSelect.value;
+                    els.modelSelect.value = currentModel;
                 }
             } catch (e) {
                 console.warn("Could not populate model list:", e);
+                // Fallback to a known small model
+                currentModel = "Llama-3.2-1B-Instruct-q4f32_1-MLC";
             }
 
             setBadge("WebGPU (WebLLM) — initializing…");
@@ -442,8 +483,20 @@ async function initWithTimeout() {
             const engineConfig = {
                 initProgressCallback: (r) => {
                     const progress = r.progress ? ` (${Math.round(r.progress * 100)}%)` : '';
-                    els.initLabel.textContent = (r.text || "Loading…") + progress;
-                    console.log('📥 Model loading:', r.text, progress);
+                    const progressText = r.text || "Loading…";
+                    
+                    // Show more detailed progress
+                    if (progressText.includes("download")) {
+                        els.initLabel.textContent = `Downloading model${progress} - This may take a few minutes on first run`;
+                        setBadge(`Downloading${progress}`);
+                    } else if (progressText.includes("load")) {
+                        els.initLabel.textContent = `Loading model into memory${progress}`;
+                        setBadge(`Loading${progress}`);
+                    } else {
+                        els.initLabel.textContent = progressText + progress;
+                    }
+                    
+                    console.log('📥 Model loading:', progressText, progress);
                 },
                 appConfig: webllm.prebuiltAppConfig,
             };
