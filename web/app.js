@@ -1,9 +1,9 @@
 // app.js — WebLLM primary runtime with WebGPU, WASM fallback via wllama
 // Enhanced UX with processing feedback and stop button
 
-// CDN ESM endpoints (pin versions for stability)
-const WEBLLM_URL = "https://unpkg.com/@mlc-ai/web-llm@0.2.79?module";
-const WLLAMA_URL = "https://unpkg.com/@wllama/wllama@2.3.5/esm/wasm-from-cdn.js?module";
+// CDN ESM endpoints (using jsdelivr for better reliability)
+const WEBLLM_URL = "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.46/+esm";
+const WLLAMA_URL = "https://cdn.jsdelivr.net/npm/@wllama/wllama@2.0.0/esm/wasm-from-cdn.js";
 
 // Global state
 let engine = null;
@@ -400,7 +400,18 @@ async function initWithTimeout() {
     if (typeof navigator !== "undefined" && navigator.gpu) {
         try {
             console.log('🎮 Attempting WebGPU initialization...');
-            const { default: webllm } = await import(WEBLLM_URL);
+            setBadge("Loading WebLLM library...");
+            els.initLabel.textContent = "Loading AI library...";
+            
+            let webllm;
+            try {
+                const module = await import(WEBLLM_URL);
+                webllm = module.default || module;
+                console.log('✅ WebLLM library loaded successfully');
+            } catch (importError) {
+                console.error('❌ Failed to import WebLLM:', importError);
+                throw new Error(`Failed to load WebLLM library: ${importError.message}`);
+            }
             
             // Check if WebGPU is actually available
             const adapter = await navigator.gpu.requestAdapter();
